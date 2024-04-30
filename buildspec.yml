@@ -1,0 +1,17 @@
+version: 0.2
+
+phases:
+  
+  build:
+    commands:
+      - apt-get update
+      - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+      - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+      - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.18.3
+
+
+     
+# artifacts:
+#   files:
+#      - gitleaks_custom_result.json
+#      - whispers_result.json
