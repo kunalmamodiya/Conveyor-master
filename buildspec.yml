@@ -4,6 +4,7 @@ phases:
   
   build:
     commands:
+      - echo "Build started"
       - yum update
       - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
       - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
