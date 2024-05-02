@@ -10,7 +10,7 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+  pre_build:
     # The type of runner that the job will run on
     runs-on: self-hosted
 
@@ -27,12 +27,21 @@ jobs:
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo sh -s -- -b /usr/local/bin
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
+          
+  build:
+    runs-on: self-hosted
+    steps:
       - name: Generating Reports
         run : |
           syft ./ > syft-report.txt
           grype ./ > grype-report.txt
           trivy fs --format cyclonedx --output trivy-dependencies.json ./
           trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+          
+  post_build:
+    needs: [build]
+    runs-on: self-hosted
+    steps:
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
