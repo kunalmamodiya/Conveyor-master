@@ -2,16 +2,24 @@ version: 0.2
 
 phases:
   
-  build:
+  pre_build:
     commands:
-      - echo "Build started"
+      - echo "Installing tools.."
       - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
       - curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
       - curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin v0.18.3
-
+  build:
+    commands:
+      - echo "Generating Dependency Reports"
+      - syft ./ > syft-conveyor.txt
+      - grype ./ > grype-conveyor.txt
+      - trivy fs --format spdx-json --output conveyor-trivy-dependencies.json ./
+      - trivy fs --scanners vuln --format spdx --output conveyor-trivy-vulnerabilities.json ./
 
      
-# artifacts:
-#   files:
-#      - gitleaks_custom_result.json
-#      - whispers_result.json
+artifacts:
+  files:
+     - syft-conveyor.txt
+     - grype-conveyor.txt
+     - conveyor-trivy-dependencies.json
+     - conveyor-trivy-vulnerabilities.json
