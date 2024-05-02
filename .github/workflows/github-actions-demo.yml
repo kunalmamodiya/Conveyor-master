@@ -1,0 +1,23 @@
+#workflow to trigger the git pull on server to always have latest code on server
+
+name: git pull workflow
+
+# Controls when the action will run. Workflow runs when manually triggered using the UI
+# or API.
+on:
+  push:
+    branches: [ "main" ]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: self-hosted
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Runs a single command using the runners shell
+      - uses: actions/checkout@v3
+
+      - name: validate if working
+        run : echo 'running on server ls'
