@@ -11,15 +11,15 @@ phases:
   build:
     commands:
       - echo "Generating Dependency Reports"
-      - syft ./ > syft-conveyor.txt
-      - grype ./ > grype-conveyor.txt
-      - trivy fs --format spdx --output conveyor-trivy-dependencies.json ./
-      - trivy fs --scanners vuln --format spdx --output conveyor-trivy-vulnerabilities.json ./
+      - syft ./ > syft-report.txt
+      - grype ./ > grype-report.txt
+      - trivy fs --format cyclonedx --output trivy-dependencies.json ./
+      - trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
 
      
 artifacts:
   files:
      - syft-conveyor.txt
      - grype-conveyor.txt
-     - conveyor-trivy-dependencies.json
-     - conveyor-trivy-vulnerabilities.json
+     - trivy-dependencies.json
+     - trivy-vulnerabilities.json
