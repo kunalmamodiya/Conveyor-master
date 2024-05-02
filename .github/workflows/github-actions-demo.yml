@@ -33,3 +33,8 @@ jobs:
           grype ./ > grype-report.txt
           trivy fs --format cyclonedx --output trivy-dependencies.json ./
           trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+      - name: Save artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: VulnerabilityReoprts
+          path: /home/ec2-user/
