@@ -37,4 +37,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: VulnerabilityReoprts
-          path: /home/ec2-user/
+          path: |
+            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/syft-report.txt
+            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/grype-report.txt
+            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-vulnerabilities.json
+            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-dependencies.json
