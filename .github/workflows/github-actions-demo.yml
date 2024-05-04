@@ -1,6 +1,6 @@
 #workflow to trigger the git pull on server to always have latest code on server
 
-name: git pull workflow
+name: VulnerabiltyScanner
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
 # or API.
