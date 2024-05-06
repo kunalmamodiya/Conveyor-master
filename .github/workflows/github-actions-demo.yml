@@ -47,13 +47,16 @@ jobs:
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
           trivy fs --format cyclonedx --output trivy-dependencies.json ./
           trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+          trivy sbom trivy-dependencies.json > trivy-dependencies.txt
+          trivy sbom trivy-vulnerabilities.json > trivy-vulnerabilities.txt
+          
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
           name: TrivyReports
           path: |
-            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-vulnerabilities.json
-            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-dependencies.json
+            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-vulnerabilities.txt
+            /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-dependencies.txt
 
           
   # post_build:
