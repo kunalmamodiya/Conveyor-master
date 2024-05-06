@@ -10,7 +10,7 @@ on:
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  pre_build:
+  syft_scanning:
     # The type of runner that the job will run on
     runs-on: self-hosted
 
@@ -22,33 +22,50 @@ jobs:
       - name: validate if working
         run : echo 'running on server ls'
 
-      - name: Installation of tools 
+      - name: Syft and Grype Scan
         run : |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
           curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo sh -s -- -b /usr/local/bin
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
-          
-  build:
-    needs: [pre_build]
-    runs-on: self-hosted
-    steps:
-      - name: Generating Reports
-        run : |
           syft ./ > syft-report.txt
           grype ./ > grype-report.txt
-          trivy fs --format cyclonedx --output trivy-dependencies.json ./
-          trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
-          
-  post_build:
-    needs: [build]
-    runs-on: self-hosted
-    steps:
+
       - name: Save artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: VulnerabilityReoprts
+          name: SyftReports
           path: |
             /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/syft-report.txt
             /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/grype-report.txt
+          
+  build:
+    # needs: [syft_scanning]
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - name: Trivy Scan
+        run : |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
+          trivy fs --format cyclonedx --output trivy-dependencies.json ./
+          trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+      - name: Save artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: TrivyReports
+          path: |
             /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-vulnerabilities.json
             /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-dependencies.json
+
+          
+  # post_build:
+  #   needs: [build]
+  #   runs-on: self-hosted
+  #   steps:
+  #     - name: Save artifacts
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: VulnerabilityReoprts
+  #         path: |
+  #           /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/syft-report.txt
+  #           /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/grype-report.txt
+  #           /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-vulnerabilities.json
+  #           /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/trivy-dependencies.json
