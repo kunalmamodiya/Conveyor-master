@@ -2,7 +2,7 @@ version: 0.2
 
 phases:
   
-  syft_scan:
+  pre_build:
     commands:
       - echo "Installing tools.."
       - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
