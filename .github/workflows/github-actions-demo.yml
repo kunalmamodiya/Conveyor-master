@@ -10,7 +10,7 @@ on:
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  syft_scanning:
+  syft_scan:
     # The type of runner that the job will run on
     runs-on: self-hosted
 
@@ -37,7 +37,7 @@ jobs:
             /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/syft-report.txt
             /home/ec2-user/actions-runner/_work/Conveyor-master/Conveyor-master/grype-report.txt
           
-  build:
+  trivy_scan:
     # needs: [syft_scanning]
     runs-on: self-hosted
     steps:
