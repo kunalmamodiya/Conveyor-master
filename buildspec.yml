@@ -15,11 +15,13 @@ phases:
       - grype ./ > grype-report.txt
       - trivy fs --format cyclonedx --output trivy-dependencies.json ./
       - trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+      - trivy sbom .\trivy-dependencies.json > trivy-dependencies.txt
+      - trivy sbom .\trivy-vulnerabilities.json ./ > trivy-vulnerabilities.txt
 
      
 artifacts:
   files:
      - syft-report.txt
      - grype-report.txt
-     - trivy-dependencies.json
-     - trivy-vulnerabilities.json
+     - trivy-dependencies.txt
+     - trivy-vulnerabilities.txt
