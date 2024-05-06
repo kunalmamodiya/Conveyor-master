@@ -2,7 +2,7 @@ version: 0.2
 
 phases:
   
-  pre_build:
+  syft_scan:
     commands:
       - echo "Installing tools.."
       - curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
@@ -15,8 +15,6 @@ phases:
       - grype ./ > grype-report.txt
       - trivy fs --format cyclonedx --output trivy-dependencies.json ./
       - trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
-      - trivy sbom trivy-dependencies.json > trivy-dependencies.txt
-      - trivy sbom trivy-vulnerabilities.json > trivy-vulnerabilities.txt
 
      
 artifacts:
