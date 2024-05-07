@@ -19,9 +19,13 @@
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: |
-            syft-report.txt,
-            grype-report.txt
+            syft-report.txt
           artifact: 'SyftReports'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: |
+            grype-report.txt
+          artifact: 'GrypeReports'
 
   - stage: TrivyScan
     jobs:
