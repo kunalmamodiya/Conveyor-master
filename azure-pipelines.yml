@@ -20,12 +20,12 @@
         inputs:
           targetPath: |
             syft-report.txt
-          artifact: 'SyftReports'
+          artifact: 'SyftReport'
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: |
             grype-report.txt
-          artifact: 'SyftReports'
+          artifact: 'GrypeReport'
 
   - stage: TrivyScan
     jobs:
@@ -41,9 +41,9 @@
         inputs:
           targetPath: |
             trivy-dependencies.txt
-          artifact: 'TrivyReports'
+          artifact: 'TrivyDependency'
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: |
             trivy-vulnerabilities.txt
-          artifact: 'TrivyReports'
+          artifact: 'TrivyVulnerabilty'
