@@ -1,8 +1,3 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - main
 
@@ -11,11 +6,32 @@ pool:
   demands:
   - agent.name -equals AzureAgent
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+stages:
+- stage: SyftScan
+  jobs:
+  - job: syft_scan
+    steps:
+    - script: |
+        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
+        curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo sh -s -- -b /usr/local/bin
+        syft ./ > syft-report.txt
+        grype ./ > grype-report.txt
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'syft-report.txt,grype-report.txt'
+        artifact: 'SyftReports'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+- stage: TrivyScan
+  jobs:
+  - job: trivy_scan
+    steps:
+    - script: |
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
+        trivy fs --format cyclonedx --output trivy-dependencies.json ./
+        trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+        trivy sbom trivy-dependencies.json > trivy-dependencies.txt
+        trivy sbom trivy-vulnerabilities.json > trivy-vulnerabilities.txt
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'trivy-vulnerabilities.txt,trivy-dependencies.txt'
+        artifact: 'TrivyReports'
