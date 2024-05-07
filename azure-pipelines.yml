@@ -6,8 +6,10 @@
 trigger:
 - main
 
-pool:
-  vmImage: ubuntu-latest
+pool: 
+  name: Default
+  demands:
+  - agent.name -equals AzureAgent
 
 steps:
 - script: echo Hello, world!
