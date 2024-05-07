@@ -1,39 +1,39 @@
-trigger:
-- main
+  trigger:
+  - main
 
-pool: 
-  name: Default
-  demands:
-  - agent.name -equals AzureAgent
+  pool: 
+    name: Default
+    demands:
+    - agent.name -equals AzureAgent
 
-stages:
-- stage: SyftScan
-  jobs:
-  - job: syft_scan
-    steps:
-    - script: |
-        curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
-        curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo sh -s -- -b /usr/local/bin
-        syft ./ > syft-report.txt
-        grype ./ > grype-report.txt
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: |
-          'syft-report.txt'
-          'grype-report.txt'
-        artifact: 'SyftReports'
+  stages:
+  - stage: SyftScan
+    jobs:
+    - job: syft_scan
+      steps:
+      - script: |
+          curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
+          curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sudo sh -s -- -b /usr/local/bin
+          syft ./ > syft-report.txt
+          grype ./ > grype-report.txt
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: |
+            syft-report.txt
+            grype-report.txt
+          artifact: 'SyftReports'
 
-- stage: TrivyScan
-  jobs:
-  - job: trivy_scan
-    steps:
-    - script: |
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
-        trivy fs --format cyclonedx --output trivy-dependencies.json ./
-        trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
-        trivy sbom trivy-dependencies.json > trivy-dependencies.txt
-        trivy sbom trivy-vulnerabilities.json > trivy-vulnerabilities.txt
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: 'trivy-vulnerabilities.txt,trivy-dependencies.txt'
-        artifact: 'TrivyReports'
+  - stage: TrivyScan
+    jobs:
+    - job: trivy_scan
+      steps:
+      - script: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sudo sh -s -- -b /usr/local/bin v0.50.4
+          trivy fs --format cyclonedx --output trivy-dependencies.json ./
+          trivy fs --scanners vuln --format cyclonedx --output trivy-vulnerabilities.json ./
+          trivy sbom trivy-dependencies.json > trivy-dependencies.txt
+          trivy sbom trivy-vulnerabilities.json > trivy-vulnerabilities.txt
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: 'trivy-vulnerabilities.txt,trivy-dependencies.txt'
+          artifact: 'TrivyReports'
