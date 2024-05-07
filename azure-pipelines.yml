@@ -18,7 +18,9 @@ stages:
         grype ./ > grype-report.txt
     - task: PublishPipelineArtifact@1
       inputs:
-        targetPath: 'syft-report.txt,grype-report.txt'
+        targetPath: |
+          'syft-report.txt'
+          'grype-report.txt'
         artifact: 'SyftReports'
 
 - stage: TrivyScan
