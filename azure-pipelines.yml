@@ -2,9 +2,9 @@
   - main
 
   pool: 
-    name: Default
+    name: Azure Pipelines
     demands:
-    - agent.name -equals AzureAgent
+    - agent.name -equals Hosted Agent
 
   stages:
   - stage: SyftScan
