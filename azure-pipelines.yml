@@ -1,10 +1,9 @@
   trigger:
   - main
 
-  pool: 
-    name: Azure Pipelines
-    demands:
-    - agent.name -equals Hosted Agent
+  pool:
+    vmImage: 'ubuntu-latest'  # You can use windows-latest, macos-latest, etc.
+
 
   stages:
   - stage: SyftScan
